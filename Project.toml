@@ -1,0 +1,13 @@
+name = "Scattering"
+uuid = "ee89e84f-d0c9-46d3-af34-50d21503c048"
+authors = ["Erlend Lima <erlendlima@outlook.com> and contributors"]
+version = "0.1.0"
+
+[compat]
+julia = "1"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
