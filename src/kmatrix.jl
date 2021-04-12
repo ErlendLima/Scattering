@@ -2,6 +2,7 @@ using ArgCheck
 using LinearAlgebra
 using DocStringExtensions
 using .Scattering
+import QuadGK
 
 """
 Contains parameters for running K-Matrix calculations.
@@ -121,6 +122,7 @@ $(SIGNATURES)
 
 """
 function transform!(xs, weights)
+    # Times 197 for MeV
     @. weights = π/4 * weights / cos(π/4*(1.0 + xs))^2
     @. xs      = tan(π/4*(1.0 + xs))
 end

@@ -29,7 +29,7 @@ function (P::Reid)(k, k′)
 end
 
 function (P::Reid)(V, η, k, k′)
-    μ = 0.7 # fm^-1
+    μ = 0.7 # fm^-1. Times 197 for MeV
     ln = log(((μ*η)^2 + (k + k′)^2)/
              ((μ*η)^2 + (k - k′)^2))
     V/(4μ*k*k′)*ln
@@ -121,15 +121,17 @@ struct NNLO <: Potential
     C₀::Float64
     C₂::Float64
     C₄::Float64
+    C₄′::Float64
 end
+NNLO(c0, c2, c4) = NNLO(c0, c2, c4, c4)
 
 function (V::NNLO)(k, k′)
-    V.C₀ + V.C₂*(k^2 + k′^2) + V.C₄*(k^4 + k′^4) + V.C₄*k^2*k′^2
+    V.C₀ + V.C₂*(k^2 + k′^2) + V.C₄*(k^4 + k′^4) + V.C₄′*k^2*k′^2
 end
 
 #= Pion interaction =#
 struct Pion <: Potential
-    mπ::Float64
+    mπ::Float64 # Defaults to [fm^-1]. Time with 197 for MeV
     Vπ::Float64
 end
 Pion(Vπ::Real) = Pion(0.7, Vπ)
@@ -155,13 +157,16 @@ end
 #= UV Regulatization =#
 struct UVRegulator <: Potential
     V::Potential
-    Λ::Float64  # Cutoff parameter [fm⁻¹]
+    Λ::Float64  # Cutoff parameter [fm⁻¹]. Why fm??
 end
 
+# f(k-k'?)
 function (V::UVRegulator)(k, k′)
+#    @show k, V.Λ
     exp(-k^4/V.Λ^4) * V.V(k, k′) * exp(-k′^4/V.Λ^4)
 end
 
 function regularize(V::Potential, Λ; method::Symbol = :UV)::UVRegulator
     UVRegulator(V, Λ)
 end
+
